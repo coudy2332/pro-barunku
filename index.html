@@ -90,7 +90,7 @@
         }
 
         /* Styl pro inputy v tmavém režimu */
-        input[type="date"], input[type="time"], select, textarea {
+        input[type="date"], select, textarea {
             color-scheme: dark;
         }
     </style>
@@ -177,8 +177,12 @@
                     <input type="date" id="date-input" class="w-full p-3.5 bg-emerald-950/60 border border-amber-500/30 rounded-2xl text-emerald-100 focus:outline-none focus:border-amber-400">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-amber-300/80 uppercase mb-2">Čas setkání</label>
-                    <input type="time" id="time-input" value="18:00" class="w-full p-3.5 bg-emerald-950/60 border border-amber-500/30 rounded-2xl text-emerald-100 focus:outline-none focus:border-amber-400">
+                    <label class="block text-xs font-bold text-amber-300/80 uppercase mb-2">Čas setkání (24h)</label>
+                    <div class="flex items-center gap-2">
+                        <select id="hour-input" class="w-full p-3.5 bg-emerald-950/60 border border-amber-500/30 rounded-2xl text-emerald-100 text-center font-semibold focus:outline-none focus:border-amber-400"></select>
+                        <span class="text-amber-400 font-extrabold text-xl">:</span>
+                        <select id="minute-input" class="w-full p-3.5 bg-emerald-950/60 border border-amber-500/30 rounded-2xl text-emerald-100 text-center font-semibold focus:outline-none focus:border-amber-400"></select>
+                    </div>
                 </div>
             </div>
 
@@ -332,6 +336,27 @@
         tomorrow.setDate(tomorrow.getDate() + 1);
         document.getElementById('date-input').valueAsDate = tomorrow;
 
+        // Naplnění 24h výběru hodin (00–23) a minut (00–55)
+        const hourSelect = document.getElementById('hour-input');
+        for (let h = 0; h < 24; h++) {
+            const val = h < 10 ? '0' + h : '' + h;
+            const opt = document.createElement('option');
+            opt.value = val;
+            opt.textContent = val;
+            if (val === '18') opt.selected = true;
+            hourSelect.appendChild(opt);
+        }
+
+        const minuteSelect = document.getElementById('minute-input');
+        for (let m = 0; m < 60; m += 5) {
+            const val = m < 10 ? '0' + m : '' + m;
+            const opt = document.createElement('option');
+            opt.value = val;
+            opt.textContent = val;
+            if (val === '00') opt.selected = true;
+            minuteSelect.appendChild(opt);
+        }
+
         // Vtipné české texty pro uskakující tlačítko NE
         const noExcuses = [
             "Určitě myslíš ANO!",
@@ -370,7 +395,9 @@
 
         function saveDateTimeAndNext() {
             const dateVal = document.getElementById('date-input').value;
-            selectedTimeStr = document.getElementById('time-input').value || "18:00";
+            const hVal = document.getElementById('hour-input').value;
+            const mVal = document.getElementById('minute-input').value;
+            selectedTimeStr = `${hVal}:${mVal}`;
 
             if (dateVal) {
                 const dateObj = new Date(dateVal);
@@ -448,8 +475,7 @@
             const dateVal = document.getElementById('date-input').value;
             let targetDate = new Date();
             if (dateVal) {
-                const timePart = selectedTimeStr.substring(0, 5) || '18:00';
-                targetDate = new Date(dateVal + 'T' + timePart);
+                targetDate = new Date(dateVal + 'T' + selectedTimeStr);
             } else {
                 targetDate.setDate(targetDate.getDate() + 2);
             }
