@@ -90,7 +90,7 @@
         }
 
         /* Styl pro inputy v tmavém režimu */
-        input[type="date"], select, textarea {
+        input[type="date"], input[type="time"], select, textarea {
             color-scheme: dark;
         }
     </style>
@@ -178,12 +178,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-amber-300/80 uppercase mb-2">Čas setkání</label>
-                    <select id="time-input" class="w-full p-3.5 bg-emerald-950/60 border border-amber-500/30 rounded-2xl text-emerald-100 focus:outline-none focus:border-amber-400">
-                        <option value="17:00">17:00 (Podvečerní pohodový čas)</option>
-                        <option value="18:00" selected>18:00 (Klasický večerní čas)</option>
-                        <option value="19:30">19:30 (Pozdní večerní romantika)</option>
-                        <option value="Kdykoliv budeš chtít">Kdykoliv budeš chtít 💕</option>
-                    </select>
+                    <input type="time" id="time-input" value="18:00" class="w-full p-3.5 bg-emerald-950/60 border border-amber-500/30 rounded-2xl text-emerald-100 focus:outline-none focus:border-amber-400">
                 </div>
             </div>
 
@@ -375,7 +370,7 @@
 
         function saveDateTimeAndNext() {
             const dateVal = document.getElementById('date-input').value;
-            selectedTimeStr = document.getElementById('time-input').value;
+            selectedTimeStr = document.getElementById('time-input').value || "18:00";
 
             if (dateVal) {
                 const dateObj = new Date(dateVal);
